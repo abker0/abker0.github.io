@@ -28,14 +28,22 @@ function type() {
 }
 
 function showInputLine() {
+  // Check if user is on mobile device
+  const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
   document.getElementById('terminal').innerHTML = 
     output + 
-    `<span class="terminal-input-line"><span class="prompt">&gt;</span><span id="terminal-editable" class="terminal-editable" contenteditable="true" spellcheck="false"></span></span>`;
+    `<span class="terminal-input-line"><span class="prompt">&gt;</span><span id="terminal-editable" class="terminal-editable" contenteditable="${!isMobile}" spellcheck="false"></span></span>`;
+  
   const editable = document.getElementById('terminal-editable');
-  editable.focus({ preventScroll: true }); 
-  placeCursorAtEnd(editable);
-  editable.addEventListener('input', updateBlockCursor);
-  editable.addEventListener('keydown', handleInputEnter);
+  
+  if (!isMobile) {
+    editable.focus({ preventScroll: true }); 
+    placeCursorAtEnd(editable);
+    editable.addEventListener('input', updateBlockCursor);
+    editable.addEventListener('keydown', handleInputEnter);
+  }
+  
   updateBlockCursor();
 }
 
@@ -69,10 +77,17 @@ function handleInputEnter(e) {
 function updateBlockCursor() {
   const editable = document.getElementById('terminal-editable');
   if (!editable) return;
+  
+  // Check if user is on mobile device
+  const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
   editable.innerHTML = editable.textContent.replace(/▉/g, '');
   let text = editable.textContent;
   editable.innerHTML = text + '<span class="block-cursor">▉</span>';
-  placeCursorAtEnd(editable);
+  
+  if (!isMobile) {
+    placeCursorAtEnd(editable);
+  }
 }
 
 function placeCursorAtEnd(el) {
